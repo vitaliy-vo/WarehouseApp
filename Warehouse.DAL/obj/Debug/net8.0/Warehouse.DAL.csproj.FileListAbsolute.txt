@@ -1,0 +1,16 @@
+F:\C#\WarehouseApp\Warehouse.DAL\bin\Debug\net8.0\Warehouse.DAL.deps.json
+F:\C#\WarehouseApp\Warehouse.DAL\bin\Debug\net8.0\Warehouse.DAL.dll
+F:\C#\WarehouseApp\Warehouse.DAL\bin\Debug\net8.0\Warehouse.DAL.pdb
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.GeneratedMSBuildEditorConfig.editorconfig
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.AssemblyInfoInputs.cache
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.AssemblyInfo.cs
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.csproj.CoreCompileInputs.cache
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.dll
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\refint\Warehouse.DAL.dll
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.pdb
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\ref\Warehouse.DAL.dll
+F:\C#\WarehouseApp\Warehouse.DAL\bin\Debug\net8.0\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.DAL\bin\Debug\net8.0\Warehouse.Core.pdb
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.csproj.AssemblyReference.cache
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehous.60A89969.Up2Date
+F:\C#\WarehouseApp\Warehouse.DAL\obj\Debug\net8.0\Warehouse.DAL.sourcelink.json

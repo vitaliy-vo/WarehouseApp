@@ -1,0 +1,16 @@
+F:\C#\WarehouseApp\Warehouse.BLL\bin\Debug\net8.0\Warehouse.BLL.deps.json
+F:\C#\WarehouseApp\Warehouse.BLL\bin\Debug\net8.0\Warehouse.BLL.dll
+F:\C#\WarehouseApp\Warehouse.BLL\bin\Debug\net8.0\Warehouse.BLL.pdb
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.GeneratedMSBuildEditorConfig.editorconfig
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.AssemblyInfoInputs.cache
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.AssemblyInfo.cs
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.csproj.CoreCompileInputs.cache
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.dll
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\refint\Warehouse.BLL.dll
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.pdb
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\ref\Warehouse.BLL.dll
+F:\C#\WarehouseApp\Warehouse.BLL\bin\Debug\net8.0\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.BLL\bin\Debug\net8.0\Warehouse.Core.pdb
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.csproj.AssemblyReference.cache
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehous.5301D0B3.Up2Date
+F:\C#\WarehouseApp\Warehouse.BLL\obj\Debug\net8.0\Warehouse.BLL.sourcelink.json

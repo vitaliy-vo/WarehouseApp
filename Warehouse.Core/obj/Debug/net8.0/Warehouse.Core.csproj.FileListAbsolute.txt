@@ -1,0 +1,13 @@
+F:\C#\WarehouseApp\Warehouse.Core\bin\Debug\net8.0\Warehouse.Core.deps.json
+F:\C#\WarehouseApp\Warehouse.Core\bin\Debug\net8.0\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.Core\bin\Debug\net8.0\Warehouse.Core.pdb
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.csproj.AssemblyReference.cache
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.GeneratedMSBuildEditorConfig.editorconfig
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.AssemblyInfoInputs.cache
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.AssemblyInfo.cs
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.csproj.CoreCompileInputs.cache
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\refint\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.pdb
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\ref\Warehouse.Core.dll
+F:\C#\WarehouseApp\Warehouse.Core\obj\Debug\net8.0\Warehouse.Core.sourcelink.json

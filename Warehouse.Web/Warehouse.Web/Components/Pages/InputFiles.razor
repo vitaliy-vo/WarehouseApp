@@ -1,0 +1,43 @@
+﻿@page "/fileinputs"
+<h3>InputFile</h3>
+
+<InputFile OnChange=HandleSelection"></InputFile>
+
+@if (selectedFiles != null && selectedFiles.Any())
+{
+    <p>Total Files: @selectedFiles.Count</p>
+    <ul>
+        @foreach (var file in selectedFiles)
+        {
+            <li>@file.Name - @((file.Size / 1024.0).ToString("F2")) KB</li>
+        }
+    </ul>
+}
+@code {
+    
+    IReadOnlyList<IBrowserFile> selectedFiles;
+
+
+
+
+    void HandleSelection(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            // Ограничьте до 1 файла и маленького размера для теста
+            var file = e.File;
+            if (file.Size > 1024 * 1024) // 1MB
+            {
+                return;
+            }
+            
+            selectedFiles = new List<IBrowserFile> { file };
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex}");
+        }
+    }
+
+}

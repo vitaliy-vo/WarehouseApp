@@ -1,0 +1,67 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+<link rel="stylesheet" href="styles.css" />
+
+<div class="form-container">
+    <EditForm Model="loginModel" OnValidSubmit="LoginAuth" FormName="Login">
+        <div class="text-center mb-3">
+            <img src="/images/login/StartLoginIcon.png" alt="Lock" width="48" height="48">
+        </div>
+
+    <div data-mdb-input-init class="form-outline mb-4">
+        <InputText @bind-Value="loginModel.Login" type="text" id="form2Example1" class="form-control" />
+        <label class="form-label" for="form2Example1">login</label>
+    </div>
+
+    <div data-mdb-input-init class="form-outline mb-4">
+        <InputText @bind-Value="loginModel.Password" type="password" id="form2Example2" class="form-control" />
+        <label class="form-label" for="form2Example2">Password</label>
+    </div>
+
+    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign in</button>
+
+</EditForm>
+</div>
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext { get; set; }
+
+    [SupplyParameterFromForm]
+    public LoginModel loginModel { get; set; } = new LoginModel();
+
+    [Inject]
+    public AuthService AuthService{ get; set; }
+
+    public async void LoginAuth()
+    {
+        bool isAuthenticated = AuthService.Authenticate(loginModel.Login, loginModel.Password);
+
+        var user = AuthService.GetUser(loginModel.Login);
+
+        if (isAuthenticated)
+        {
+            var claims = new List<Claim>
+        {
+        new Claim(ClaimTypes.Name, user.Login),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Role, user.Role)
+        };
+
+            var indentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var pr = new ClaimsPrincipal(indentity);
+
+            await httpContext.SignInAsync(pr);
+
+            httpContext.Response.Redirect("/");
+        }
+        else
+        {
+           
+            httpContext.Response.Redirect("/login");
+
+        }
+    }
+
+}

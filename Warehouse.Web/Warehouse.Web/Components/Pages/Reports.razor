@@ -1,0 +1,213 @@
+﻿@page "/reports"
+@using System.Security.Claims
+@inject IDailyBalanceReportService ReportService
+@inject BlankServise BlankServise
+@inject WarehousServise WarehousServise
+@rendermode InteractiveServer
+
+<PageTitle>Отчет по остаткам</PageTitle>
+
+<div class="container mt-3">
+    <NavMenu></NavMenu>
+
+    <div class="card p-3 mb-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Дата отчета:</label>
+                <InputDate @bind-Value="selectedDate" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label>Склад:</label>
+                <InputSelect @bind-Value="selectedWarehouseId" class="form-select">
+                    @foreach (var warehouse in warehouses)
+                    {
+                        <option value="@warehouse.Id">@warehouse.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-md-3">
+                <button @onclick="GenerateReport" class="btn btn-primary mt-4">
+                    Сформировать отчет
+                </button>
+                @if (isVerificationCompleted)
+                {
+                    <div class="alert alert-success">
+                        Сверка завершена
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (reportData != null && reportData.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Заготовка</th>
+                        <th>Остаток на начало</th>
+                        <th>Поступления</th>
+                        <th>Списания</th>
+                        <th>Брак</th>
+                        <th>Остаток на конец</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in reportData)
+                    {
+                        <tr class="@(item.TotalReceipts!=0||item.TotalIssues!=0||item.DefectiveCount!=0 ? "bg-success" : "")">
+                            <td>@item.BlankName</td>
+                            <td>@item.OpeningBalance</td>
+                            <td>@item.TotalReceipts</td>
+                            <td>@item.TotalIssues</td>
+                            <td>@item.DefectiveCount</td>
+                            <td><strong>@item.ClosingBalance</strong></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-info">
+                        <td><strong>ИТОГО:</strong></td>
+                        <td>@reportData.Sum(r => r.OpeningBalance)</td>
+                        <td>@reportData.Sum(r => r.TotalReceipts)</td>
+                        <td>@reportData.Sum(r => r.TotalIssues)</td>
+                        <td>@reportData.Sum(r => r.DefectiveCount)</td>
+                        <td><strong>@reportData.Sum(r => r.ClosingBalance)</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+    else if (reportData != null)
+    {
+        <div class="alert alert-info">
+            Нет данных для отчета за выбранную дату
+        </div>
+    }
+</div>
+
+@code {
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    private DateTime _selectedDate { get; set; } = DateTime.Now.Date;
+
+    private DateTime selectedDate
+    {
+        get => _selectedDate;
+        set
+        {
+            if (_selectedDate != value)
+            {
+                _selectedDate = value;
+                ViewReport();
+            }
+        }
+    }
+
+    private int selectedWarehouseId = 1;
+
+    private List<ReportViewModel> reportData;
+
+    private List<WarehouseOutPutModel> warehouses = new();
+
+    private ClaimsPrincipal? user;
+
+    private bool isVerificationCompleted;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        user = authState.User;
+
+        warehouses = await GetFilteredWarehousesAsync();
+        if (warehouses.Any())
+        {
+            selectedWarehouseId = warehouses.First().Id;
+        }
+
+    }
+
+    private async Task GenerateReport()
+    {
+
+        await ReportService.GenerateDailyReportAsync(selectedDate);
+
+        await ReportService.UpdateBlanksCountFromReportAsync(selectedDate);
+
+        var report = await ReportService.GetDailyReportAsync(selectedDate, selectedWarehouseId);
+        var blanks = BlankServise.GetAll().Where(w=>w.IdWarehouse==selectedWarehouseId).ToList();
+
+
+        reportData = report.Select(r => new ReportViewModel
+        {
+            BlankName = blanks.FirstOrDefault(b => b.Id == r.BlankId)?.NameValue ?? "Неизвестно",
+            OpeningBalance = r.OpeningBalance,
+            TotalReceipts = r.TotalReceipts,
+            TotalIssues = r.TotalIssues,
+            DefectiveCount = r.DefectiveCount,
+            ClosingBalance = r.ClosingBalance
+        }).ToList();
+
+        isVerificationCompleted = true;
+        
+        await JSRuntime.InvokeVoidAsync("alert", "Отчет сгенерирован и остатки обновлены!");
+        
+        StateHasChanged();
+    }
+
+    private async Task ViewReport()
+    {
+        var report = await ReportService.GetDailyReportAsync(selectedDate, selectedWarehouseId);
+        var blanks = BlankServise.GetAll().Where(w => w.IdWarehouse == selectedWarehouseId).ToList();
+
+
+        reportData = report.Select(r => new ReportViewModel
+        {
+            BlankName = blanks.FirstOrDefault(b => b.Id == r.BlankId)?.NameValue ?? "Неизвестно",
+            OpeningBalance = r.OpeningBalance,
+            TotalReceipts = r.TotalReceipts,
+            TotalIssues = r.TotalIssues,
+            DefectiveCount = r.DefectiveCount,
+            ClosingBalance = r.ClosingBalance
+        }).ToList();
+        isVerificationCompleted = true;
+        StateHasChanged();
+    }
+
+
+    private async Task<List<WarehouseOutPutModel>> GetFilteredWarehousesAsync()
+    {
+        
+        var allWarehouses = WarehousServise.GetAll();
+        if (user.IsInRole("Admin"))
+        {
+
+            return allWarehouses;
+        }
+        else if (user.IsInRole("User1"))
+        {
+            // User1 видит только склад с ID = 1
+            return allWarehouses.Where(w => w.Id == 1).ToList();
+        }
+        else if (user.IsInRole("User2"))
+        {
+            // User2 видит только склад с ID = 2
+            return allWarehouses.Where(w => w.Id == 2).ToList();
+        }
+        else
+        {
+            return new List<WarehouseOutPutModel>();
+        }
+        return allWarehouses;
+    }
+
+    
+}

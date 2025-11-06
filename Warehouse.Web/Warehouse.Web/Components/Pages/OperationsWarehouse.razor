@@ -1,0 +1,766 @@
+﻿@using System.Security.Claims
+@using Warehouse.Core
+
+@rendermode InteractiveServer
+@page "/operations"
+
+
+<link rel="stylesheet" href="styles.css"/>
+
+@* OperationsWarehouse.razor *@
+<PageTitle>OperationsWarehouse</PageTitle>
+
+
+<div class="container mt-3 flex-grow-0">
+    <NavMenu></NavMenu>
+    <div class="bd-example m-0 border-0">
+        <div class="card p-3">
+            <div class="d-flex gap-3">
+                <button @onclick="ShowModal" class="btn btn-primary">
+                    Пополнение
+                </button>
+                <button @onclick="ShowWriteOffModal" class="btn btn-outline-danger">
+                    Ручное списание
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <InputDate @bind-Value="selectedDate" ></InputDate>
+
+    <TableTemplate Items="warehouseTransactionOutModels">
+    <TableHeader>
+        <th>Дата</th>
+        <th>Хранилище</th>
+        <th>Ценность</th>
+        <th>Операция</th>
+        <th>Колличество</th>
+        <th>Основание</th>
+        <th>Пользователь</th>
+        <th>Статус</th>
+    </TableHeader>
+        <RowTemple Context="warehouseTransaction">
+            <td>@warehouseTransaction.TransactionDate</td>
+            <td>@warehouseTransaction.WarehousName</td>
+            <td>@warehouseTransaction.BlankName</td>
+            <td>@warehouseTransaction.TransactionType</td>
+            <td>@warehouseTransaction.Quantity</td>
+            <td>@warehouseTransaction.Reference</td>
+            <td>@warehouseTransaction.CreatedBy</td>
+            <td>
+            @if (!warehouseTransaction.IsCancelled)
+            {
+                <button @onclick="@(() => CancelTransaction(warehouseTransaction.Id))" class="btn btn-danger btn-sm">Отменить</button>
+            }
+            else
+            {
+                <span class="text-muted">Отменена</span>
+            }
+        </td>
+    </RowTemple>
+</TableTemplate>
+    
+</div>
+
+
+
+@* Модальное окно *@
+@if (showModal)
+{
+    <div class="modal show d-block fade" tabindex="-1" style="background-color: rgba(0,0,0,0.5)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Пополнение остатков</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <EditForm Model="@transactionModel" OnValidSubmit="SubmitTransaction">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="alert alert-danger" style="display: block;" />
+                        <div class="mb-3">
+                            <label class="form-label">Дата транзакции:</label>
+                            <InputDate class="form-control" @bind-Value="transactionModel.TransactionDate" />
+                            <ValidationMessage For="@(() => transactionModel.TransactionDate)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Склад:</label>
+                            <InputSelect class="form-select" @bind-Value="transactionModel.WarehouseId">
+                                <option value="0">Выберите склад</option>
+                                @foreach (var b in warehous)
+                                {
+                                    <option value="@b.Id">@b.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => transactionModel.WarehouseId)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Основание:</label>
+                            <InputSelect class="form-select" @bind-Value="transactionModel.TransactionTypeId">
+                                <option value="0">Выберите основание</option>
+                                @foreach (var b in operationType.Where(o => o.Type.Equals("Replenishment")))
+                                {
+                                    <option value="@b.Id">@b.Operation</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => transactionModel.TransactionTypeId)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Заготовка:</label>
+                            <InputSelect class="form-select" @bind-Value="transactionModel.BlankId">
+                                <option value="0">Выберите заготовку</option>
+                                @foreach (var b in blanks)
+                                {
+                                    <option value="@b.Id">@b.NameValue</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => transactionModel.BlankId)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Количество:</label>
+                            <InputNumber class="form-control" @bind-Value="transactionModel.Quantity" />
+                            <ValidationMessage For="@(() => transactionModel.Quantity)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Основание:</label>
+                            <InputText class="form-control" @bind-Value="transactionModel.Reference" />
+                            <ValidationMessage For="@(() => transactionModel.Reference)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Создал:</label>
+                            <InputText class="form-control" @bind-Value="transactionModel.CreatedBy" readonly />
+                            <ValidationMessage For="@(() => transactionModel.CreatedBy)" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="HideModal">Отмена</button>
+                            <button type="submit" class="btn btn-primary">Сохранить</button> 
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@* Модальное окно списания *@
+@if (showWriteOffModal)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5)">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Списание заготовок</h5>
+                    <button type="button" class="btn-close" @onclick="HideWriteOffModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(writeOffErrorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @writeOffErrorMessage
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(writeOffSuccessMessage))
+                    {
+                        <div class="alert alert-success">
+                            @writeOffSuccessMessage
+                        </div>
+                    }
+
+                    <!-- Форма добавления новой позиции -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6>Добавить позицию для списания</h6>
+                        </div>
+                        <div class="card-body">
+                            <EditForm Model="@newWriteOffItem" OnValidSubmit="AddWriteOffItem">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Заготовка:</label>
+                                            <InputSelect class="form-select" @bind-Value="newWriteOffItem.BlankId">
+                                                <option value="0">Выберите заготовку</option>
+                                                @foreach (var b in blanksWriteOff)
+                                                {
+                                                    <option value="@b.Id">@b.NameValue</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Количество:</label>
+                                            <InputNumber class="form-control" @bind-Value="newWriteOffItem.Quantity" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="mb-3">
+                                            <label class="form-label">Комментарий:</label>
+                                            <InputText class="form-control" @bind-Value="newWriteOffItem.Comment"
+                                                       placeholder="Причина..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-plus"></i> Добавить позицию
+                                </button>
+                            </EditForm>
+                        </div>
+                    </div>
+
+                    <!-- Список добавленных позиций -->
+                    @if (writeOffModel.Items.Any())
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h6>Позиции для списания (@writeOffModel.Items.Count)</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Заготовка</th>
+                                                <th>Количество</th>
+                                                <th>Комментарий</th>
+                                                <th>Действие</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in writeOffModel.Items)
+                                            {
+                                                var blankName = blanksWriteOff.FirstOrDefault(b => b.Id == item.BlankId)?.NameValue ?? "Неизвестно";
+                                                <tr>
+                                                    <td>@blankName</td>
+                                                    <td>@item.Quantity</td>
+                                                    <td>@item.Comment</td>
+                                                    <td>
+                                                        <button @onclick="() => RemoveWriteOffItem(item)"
+                                                                class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Нет добавленных позиций. Добавьте заготовки для списания.
+                        </div>
+                    }
+
+                    <!-- Общая информация о списании -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6>Общая информация</h6>
+                        </div>
+                        <div class="card-body">
+                            <EditForm Model="@writeOffModel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Склад:</label>
+                                            <InputSelect class="form-select" @bind-Value="writeOffModel.WarehouseId">
+                                                @foreach (var w in warehousWriteOff)
+                                                {
+                                                    <option value="@w.Id">@w.Name</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Дата списания:</label>
+                                            <InputDate class="form-control" @bind-Value="writeOffModel.TransactionDate" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Основание списания:</label>
+                                    <InputSelect class="form-select" @bind-Value="writeOffModel.TransactionTypeId">
+                                        @foreach (var b in operationTypeWriteOff)
+                                        {
+                                            <option value="@b.Id">@b.Operation</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Доп. основание:</label>
+                                    <InputText class="form-control" @bind-Value="writeOffModel.Reference"
+                                               placeholder="Дополнительная причина списания..." />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Создал:</label>
+                                    <InputText class="form-control" @bind-Value="writeOffModel.CreatedBy" readonly />
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideWriteOffModal">
+                        Отмена
+                    </button>
+                    <button type="button" class="btn btn-danger" @onclick="SubmitWriteOff"
+                            disabled="@(isWriteOffLoading || !writeOffModel.Items.Any())">
+                        @if (isWriteOffLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        }
+                        Выполнить списание (@writeOffModel.Items.Sum(x => x.Quantity) шт.)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    protected override void OnInitialized()
+    {
+    }
+    private bool showModal = false;
+    private bool showWriteOffModal = false;
+    private WarehouseTransactionInputModel transactionModel = new();
+
+    [Inject]
+    public WarehouseTransactionService WarehouseTransactionService { get; set; }
+
+    [Inject]
+    public BlankServise BlankServise { get; set; }
+
+    [Inject]
+    public WarehousServise WarehousServise { get; set; }
+
+    [Inject]
+    public TransactionTypeService TransactionTypeService { get; set; }
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+
+    private List<BlankOutPutModel> blanks = new List<BlankOutPutModel>();
+
+    private List<WarehouseOutPutModel> warehous = new List<WarehouseOutPutModel>();
+
+    private List<TransactionTypeOutModel> operationType = new List<TransactionTypeOutModel>();
+
+    private List<WarehouseTransactionOutModel> warehouseTransactionOutModels = new List<WarehouseTransactionOutModel>();
+
+    private ClaimsPrincipal? user;
+
+    private bool isLoading = false;
+
+    private DateTime _selectedDate { get; set; } = DateTime.Now.Date;
+
+    private DateTime selectedDate
+    {
+        get => _selectedDate;
+        set
+        {
+            if (_selectedDate != value)
+            {
+                _selectedDate = value;
+                LoadData(); 
+            }
+        }
+    }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        showModal = false;
+        showWriteOffModal = false;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        user = authState.User;
+        LoadData();
+
+
+
+    }
+
+
+
+    private async Task ShowModal()
+    {
+        blanks = await GetFilteredBlanksAsync();
+        warehous = await GetFilteredWarehousesAsync();
+        operationType = TransactionTypeService.GetAll();
+
+        transactionModel = new WarehouseTransactionInputModel
+        {
+            TransactionDate = DateTime.Today,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = user.FindFirstValue(ClaimTypes.Role),
+            WarehouseId = 0,
+            BlankId = 0,
+            TransactionTypeId = 0,
+            Quantity = 0
+        };
+
+        showModal = true;
+        StateHasChanged();
+    }
+
+    private async Task<List<WarehouseOutPutModel>> GetFilteredWarehousesAsync()
+    {
+        var allWarehouses = WarehousServise.GetAll();
+
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+
+
+        if (user.IsInRole("Admin"))
+        {
+
+            return allWarehouses;
+        }
+        else if (user.IsInRole("User1"))
+        {
+            // User1 видит только склад с ID = 1
+            return allWarehouses.Where(w => w.Id == 1).ToList();
+        }
+        else if (user.IsInRole("User2"))
+        {
+            // User2 видит только склад с ID = 2
+            return allWarehouses.Where(w => w.Id == 2).ToList();
+        }
+        else
+        {
+            return new List<WarehouseOutPutModel>();
+        }
+    }
+
+    private async Task<List<BlankOutPutModel>> GetFilteredBlanksAsync()
+    {
+        var blanks = BlankServise.GetAll();
+
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+
+
+        if (user.IsInRole("Admin"))
+        {
+
+            return blanks;
+        }
+        else if (user.IsInRole("User1"))
+        {
+            // User1 видит только склад с ID = 1
+            return blanks.Where(w => w.IdWarehouse == 1).ToList();
+        }
+        else if (user.IsInRole("User2"))
+        {
+            // User2 видит только склад с ID = 2
+            return blanks.Where(w => w.IdWarehouse == 2).ToList();
+        }
+        else
+        {
+            return new List<BlankOutPutModel>();
+        }
+    }
+
+
+    private void HideModal()
+    {
+        showModal = false;
+        LoadData();
+        StateHasChanged();
+    }
+
+    private async Task SubmitTransaction()
+    {
+        if (isLoading) return;
+        isLoading = true;
+
+        try
+        {
+            if (transactionModel.WarehouseId <= 0 || transactionModel.BlankId <= 0 || transactionModel.TransactionTypeId <= 0)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Пожалуйста, заполните все обязательные поля");
+                return;
+            }
+
+            await WarehouseTransactionService.CreateTransactionAsync(transactionModel);
+            HideModal();
+            LoadData();
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("alert", "Пополнение успешно выполнено!");
+
+        }
+        catch (Exception ex)
+        {
+            // Обработка ошибок
+            Console.WriteLine($"Ошибка: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+
+    private bool isWriteOffLoading = false;
+    private string writeOffErrorMessage = string.Empty;
+    private string writeOffSuccessMessage = string.Empty;
+
+    private WriteOffModelInputModel writeOffModel = new();
+    private WriteOffItemInputModel newWriteOffItem = new();
+    private List<WarehouseOutPutModel> warehousWriteOff = new List<WarehouseOutPutModel>();
+    private List<BlankOutPutModel> blanksWriteOff = new List<BlankOutPutModel>();
+    private List<TransactionTypeOutModel> operationTypeWriteOff = new List<TransactionTypeOutModel>();
+
+    private async Task ShowWriteOffModal()
+
+    {
+        warehousWriteOff = await GetFilteredWarehousesAsync();
+        blanksWriteOff = await GetFilteredBlanksAsync();
+        operationTypeWriteOff = TransactionTypeService.GetAll()
+            .Where(o => o.Type.Equals("Write-off")) 
+            .ToList();
+        writeOffModel = new WriteOffModelInputModel
+        {
+            TransactionDate = DateTime.Today,
+            CreatedBy = user.FindFirstValue(ClaimTypes.Role)
+
+        };
+
+        if (warehousWriteOff.Count == 1)
+        {
+            writeOffModel.WarehouseId = warehousWriteOff[0].Id;
+        }
+        newWriteOffItem = new WriteOffItemInputModel();
+        showWriteOffModal = true;
+        writeOffErrorMessage = string.Empty;
+        writeOffSuccessMessage = string.Empty;
+        StateHasChanged();
+
+
+    }
+
+    private void HideWriteOffModal()
+    {
+        showWriteOffModal = false;
+
+        writeOffModel = new WriteOffModelInputModel();
+        newWriteOffItem = new WriteOffItemInputModel();
+        writeOffErrorMessage = string.Empty;
+        writeOffSuccessMessage = string.Empty;
+
+
+        StateHasChanged();
+    }
+
+    private void AddWriteOffItem()
+    {
+
+        if (newWriteOffItem.Quantity <= 0)
+        {
+            writeOffErrorMessage = "Количество должно быть больше 0";
+            StateHasChanged();
+            return;
+        }
+
+        if (newWriteOffItem.Quantity >= blanksWriteOff.Where(b => b.Id == newWriteOffItem.BlankId).First().Count)
+        {
+            writeOffErrorMessage = $"Ошибка списания на балансе  {blanksWriteOff.Where(b => b.Id == newWriteOffItem.BlankId).First().Count} шт \n  списываете {newWriteOffItem.Quantity} шт";
+
+            StateHasChanged();
+            return;
+        }
+
+
+        if (newWriteOffItem.BlankId <= 0)
+        {
+            writeOffErrorMessage = "Выберите заготовку";
+            StateHasChanged();
+            return;
+        }
+
+        if (writeOffModel.WarehouseId <= 0)
+        {
+            writeOffErrorMessage = "Сначала выберите склад в общей информации";
+            StateHasChanged();
+            return;
+        }
+
+        // Проверяем, не добавлена ли уже эта заготовка
+        if (writeOffModel.Items.Any(item => item.BlankId == newWriteOffItem.BlankId))
+        {
+            writeOffErrorMessage = "Эта заготовка уже добавлена в список";
+            StateHasChanged();
+            return;
+        }
+
+
+
+
+        writeOffModel.Items.Add(new WriteOffItemInputModel
+        {
+            BlankId = newWriteOffItem.BlankId,
+            Quantity = newWriteOffItem.Quantity,
+            Comment = newWriteOffItem.Comment
+        });
+
+        // Сбрасываем форму для новой позиции
+        newWriteOffItem = new WriteOffItemInputModel();
+        writeOffErrorMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private void RemoveWriteOffItem(WriteOffItemInputModel item)
+    {
+        writeOffModel.Items.Remove(item);
+        StateHasChanged();
+    }
+
+    private async Task SubmitWriteOff()
+    {
+        isWriteOffLoading = true;
+        writeOffErrorMessage = string.Empty;
+        writeOffSuccessMessage = string.Empty;
+        StateHasChanged();
+
+        try
+        {
+            var tmp = WarehouseTransactionService.MapIssueToProduction(writeOffModel);
+            foreach (var item in tmp)
+            {
+                await WarehouseTransactionService.CreateTransactionAsync(item);
+            }
+
+
+            writeOffSuccessMessage = "Списание успешно выполнено!";
+
+
+            // Закрываем окно через 2 секунды
+            await Task.Delay(2000);
+            HideWriteOffModal();
+            LoadData();
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            writeOffErrorMessage = $"Ошибка при списании: {ex.Message}";
+            StateHasChanged();
+        }
+        finally
+        {
+            isWriteOffLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task CancelTransaction(int transactionId)
+    {
+        try
+        {
+            // Подтверждение от пользователя
+            if (!await JSRuntime.InvokeAsync<bool>("confirm", "Вы уверены, что хотите отменить эту транзакцию?"))
+                return;
+
+            // Отмена транзакции
+            var success = await WarehouseTransactionService.CancelTransactionAsync(transactionId);
+
+            if (success)
+            {
+                // Поиск исходной транзакции
+                var transaction = warehouseTransactionOutModels
+                    .FirstOrDefault(t => t.Id == transactionId);
+
+                if (transaction == null)
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Транзакция не найдена");
+                    return;
+                }
+
+                // Получение входных данных для пересчёта
+                var inputModel = await WarehouseTransactionService.GetTransactionInputModelAsync(transaction);
+
+                if (inputModel == null)
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Не удалось получить данные для пересчёта");
+                    return;
+                }
+
+                // Пересчёт балансов
+                var transactionReverse = WarehouseTransactionService.RecalculateBalances(inputModel);
+
+                // Создание обратной транзакции (с ожиданием завершения)
+                await WarehouseTransactionService.CreateTransactionAsync(transactionReverse);
+
+                
+                 LoadData();
+                
+                // Уведомление об успехе
+                await JSRuntime.InvokeVoidAsync("alert", "Транзакция отменена");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Ошибка при отмене транзакции");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Ошибка: {ex.Message}");
+        }
+    }
+
+    private void LoadData()
+    {
+        if (WarehouseTransactionService != null)
+        {
+            if (user.IsInRole("User1"))
+            {
+                warehouseTransactionOutModels = WarehouseTransactionService
+                .GetWarehousetransactionByDate(selectedDate)
+                .Where(x => x.WarehousName.Equals("Хранилище1"))
+                .ToList();
+            }
+            else if (user.IsInRole("User2")){
+
+                warehouseTransactionOutModels = WarehouseTransactionService
+               .GetWarehousetransactionByDate(selectedDate)
+               .Where(x => x.WarehousName.Equals("Хранилище2"))
+               .ToList();
+            }
+            else if (user.IsInRole("Admin")){
+                warehouseTransactionOutModels = WarehouseTransactionService
+                    .GetWarehousetransactionByDate(selectedDate)
+                    .ToList();
+            }
+            
+    }
+    }
+}

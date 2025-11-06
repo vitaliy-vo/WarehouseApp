@@ -1,0 +1,19 @@
+﻿@page "/{Id:int}"
+@inject BlankServise BlankServise
+<h3> Хранилище @blankOutPutModel.IdWarehouse</h3>
+<h3>@blankOutPutModel.NameValue</h3>
+<h3>@blankOutPutModel.Article</h3>
+<h3>@blankOutPutModel.Count</h3>
+
+
+    @code {
+    [Parameter]
+    public int Id{ get; set; }
+
+    BlankOutPutModel blankOutPutModel;
+    protected override void OnInitialized()
+    {
+        blankOutPutModel = BlankServise.GetAll().FirstOrDefault(p => p.Id == Id);
+        base.OnInitialized();
+    }
+}

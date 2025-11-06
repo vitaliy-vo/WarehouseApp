@@ -1,0 +1,57 @@
+
+.image-button {
+    /* Делаем кнопку квадратной */
+    width: 120px;
+    height: 120px;
+    /* Закругленные углы */
+    border-radius: 15px; /* можно менять значение для разной степени скругления */
+    /* Убираем рамку и другие стандартные стили кнопки */
+    border: none;
+    /* Центрируем текст */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Стили текста */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    /* Фон и тень */
+    background: #0B63F6;
+    box-shadow: 0 5px 0 #003CC5;
+}
+
+    .image-button:hover {
+        background: #003CC5;
+        box-shadow: none;
+        transform: translateY(5px);
+    }
+
+    .image-button:active {
+        transform: scale(0.95);
+    }
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+
+.login-form {
+    width: 300px; 
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+
+.form-outline {
+    margin-bottom: 15px !important;
+}
+
+.btn-primary {
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+}

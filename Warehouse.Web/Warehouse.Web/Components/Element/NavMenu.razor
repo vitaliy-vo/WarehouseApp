@@ -1,0 +1,205 @@
+﻿<!-- NavMenu.razor -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <NavLink href="/" class="logo-link">
+                <span class="logo-text">MyApp</span>
+            </NavLink>
+        </div>
+        <ul class="nav-menu @(isMenuOpen ? "active" : "")" @onclick="CloseMenuOnClick">
+           
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="nav-icon">🏠</span>
+                    Home
+                </NavLink>
+            </li>
+            <AuthorizeView Roles="User1,User2,Admin">
+                <Authorized>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="operations">
+                    <span class="nav-icon">📦</span>
+                    Операции со складом
+                </NavLink>
+            </li>
+              </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="User1,User2,Admin">
+                <Authorized>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="reports">
+                    <span class="nav-icon">✓</span>
+                    Сверка остатков
+                </NavLink>
+            </li>
+                </Authorized>
+            </AuthorizeView>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="contact">
+                    <span class="nav-icon">📞</span>
+                    Contact
+                </NavLink>
+            </li>
+        </ul>
+
+
+
+       
+           
+    </div>
+    <div class="nav-container">
+        <div class="nav-logo">
+            <!-- Логотип -->
+        </div>
+        <AuthorizeView Roles="User1,User2,Admin">
+            <NotAuthorized>
+        <div class="nav-right">
+            <!-- Элементы входа/выхода -->
+            <NavLink class="nav-link" href="login">
+                        <span class="nav-icon">🔑 </span>
+                Войти
+            </NavLink>
+        </div>
+        </NotAuthorized>
+                <Authorized>
+        <div class="nav-right">
+            <!-- Элементы входа/выхода -->
+                    <NavLink class="nav-link" href="logout">
+                  <span class="nav-icon">🚪</span>
+                Выйти
+            </NavLink>
+        </div>
+            </Authorized>
+        </AuthorizeView>
+        <button class="hamburger">
+            <span class="nav-icon">🚪</span>
+        </button>
+    </div>
+</nav>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    private void CloseMenuOnClick()
+    {
+        if (isMenuOpen)
+            isMenuOpen = false;
+    }
+}
+
+<style>
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .nav-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1400px;
+        margin: 0 auto;
+        height: 70px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .nav-logo .logo-text {
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .nav-logo .logo-text:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+    .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        transition: all 0.3s ease;
+        position: relative;
+        width: 30px;
+        height: 25px;
+        z-index: 1001;
+    }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+    .bar {
+        display: block;
+        width: 100%;
+        height: 3px;
+        margin: 4px 0;
+        background-color: white;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .nav-menu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item {
+        position: relative;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+    .nav-icon {
+        font-size: 1.2rem;
+    }
+
+</style>
