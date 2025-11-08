@@ -16,7 +16,7 @@ namespace Warehouse.DAL
 
         public List<BlankDto> GetAll()
         {
-            var result = _dataContext.Blanks.OrderBy(x => x.NameValue).ToList();
+            var result = _dataContext.Blanks.Where(x=>x.IsActive==true).OrderBy(x => x.Id).ToList();
             return result;
         }
 

@@ -41,7 +41,7 @@
         <th>Статус</th>
     </TableHeader>
         <RowTemple Context="warehouseTransaction">
-            <td>@warehouseTransaction.TransactionDate</td>
+            <td><DatetimeComponent DateTime="@warehouseTransaction.TransactionDate"/></td>
             <td>@warehouseTransaction.WarehousName</td>
             <td>@warehouseTransaction.BlankName</td>
             <td>@warehouseTransaction.TransactionType</td>

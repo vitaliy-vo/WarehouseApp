@@ -124,3 +124,4 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\bin\Debug\net8.0\Warehouse.DAL.dl
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\bin\Debug\net8.0\Warehouse.BLL.pdb
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\bin\Debug\net8.0\Warehouse.DAL.pdb
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net8.0\scopedcss\Components\Element\NavMenu.razor.rz.scp.css
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net8.0\Warehouse.Web.sourcelink.json

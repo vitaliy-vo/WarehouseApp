@@ -26,15 +26,36 @@
                 </InputSelect>
             </div>
             <div class="col-md-3">
-                <button @onclick="GenerateReport" class="btn btn-primary mt-4">
-                    Сформировать отчет
-                </button>
+                <AuthorizeView Roles="User1,User2">
+                 <Authorized>
+                @if (selectedDate == DateTime.Now.Date)
+                {
+                    <button @onclick="GenerateReport" class="btn btn-primary mt-4">
+                        Сформировать отчет
+                    </button>
+                }
                 @if (isVerificationCompleted)
                 {
                     <div class="alert alert-success">
                         Сверка завершена
                     </div>
                 }
+                </Authorized>
+               </AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                            <button @onclick="GenerateReport" class="btn btn-primary mt-4">
+                                Сформировать отчет
+                            </button>             
+                        @if (isVerificationCompleted)
+                        {
+                            <div class="alert alert-success">
+                                Сверка завершена
+                            </div>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+                
             </div>
         </div>
     </div>
@@ -132,6 +153,7 @@
         {
             selectedWarehouseId = warehouses.First().Id;
         }
+        ViewReport();
 
     }
 
@@ -143,7 +165,7 @@
         await ReportService.UpdateBlanksCountFromReportAsync(selectedDate);
 
         var report = await ReportService.GetDailyReportAsync(selectedDate, selectedWarehouseId);
-        var blanks = BlankServise.GetAll().Where(w=>w.IdWarehouse==selectedWarehouseId).ToList();
+        var blanks = BlankServise.GetAll().Where(w=>w.IdWarehouse==selectedWarehouseId && w.IsActive==true).ToList();
 
 
         reportData = report.Select(r => new ReportViewModel
@@ -166,7 +188,7 @@
     private async Task ViewReport()
     {
         var report = await ReportService.GetDailyReportAsync(selectedDate, selectedWarehouseId);
-        var blanks = BlankServise.GetAll().Where(w => w.IdWarehouse == selectedWarehouseId).ToList();
+        var blanks = BlankServise.GetAll().Where(w => w.IdWarehouse == selectedWarehouseId && w.IsActive == true).ToList();
 
 
         reportData = report.Select(r => new ReportViewModel

@@ -22,7 +22,7 @@ namespace Warehouse.BLL
         public async Task GenerateDailyReportAsync(DateTime date)
         {
             // Получаем все склады
-            var warehouses = new[] { 1, 2 }; // или из базы данных
+            var warehouses = _warehousRepository.GetAll().Select(x => x.Id).ToList();
 
             foreach (var warehouseId in warehouses)
             {
@@ -58,11 +58,11 @@ namespace Warehouse.BLL
                     .Sum(t => t.Quantity);
 
                 var totalIssues = blankTransactions
-                    .Where(t => t.TransactionTypeId == 2 || t.TransactionTypeId == 3) // IssueToProduction или TransferToCentral
+                    .Where(t => t.TransactionTypeId == 2 || t.TransactionTypeId == 4) // IssueToProduction или TransferToCentral
                     .Sum(t => t.Quantity);
 
                 var defectiveCount = blankTransactions
-                    .Where(t => t.TransactionTypeId == 4) // DefectiveWriteOff
+                    .Where(t => t.TransactionTypeId == 3) // DefectiveWriteOff
                     .Sum(t => t.Quantity);
 
                 var closingBalance = previousBalance + totalReceipts + totalIssues + defectiveCount;

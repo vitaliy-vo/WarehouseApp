@@ -16,7 +16,7 @@ namespace Warehouse.DAL
         public async Task<List<DailyBalanceDto>> GetByDateAsync(DateTime date, int warehouseId)
         {
             return await _dataContext.DailyBalanceReport
-                .Where(r => r.Date == date.Date && r.WarehouseId == warehouseId)
+                .Where(r => r.Date == date.Date && r.WarehouseId == warehouseId).OrderBy(r=> r.Id)
                 .ToListAsync();
         }
 

@@ -223,3 +223,17 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticweb
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json

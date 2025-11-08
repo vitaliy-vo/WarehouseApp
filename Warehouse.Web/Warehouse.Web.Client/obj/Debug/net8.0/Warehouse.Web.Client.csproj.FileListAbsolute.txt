@@ -620,6 +620,7 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse.Web.Client.AssemblyInfo.cs
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse.Web.Client.csproj.CoreCompileInputs.cache
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse.Web.Client.MvcApplicationPartsAssemblyInfo.cache
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse.Web.Client.sourcelink.json
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Authorization.wasm
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Components.wasm
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Components.Forms.wasm
@@ -1020,9 +1021,9 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compresse
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\bdpzp2py2x-tptq2av103.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b1girjvfcw-lfu7j35m59.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\rueuffoy6e-oyz0vx2fzb.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b9pn1zxajf-emn5ejksnu.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\tdila017tb-f519on30sl.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\40kfjlljtt-9te7z1y0ml.gz
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b9pn1zxajf-uqgbu3p8ws.gz
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\tdila017tb-drxweplhcb.gz
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\40kfjlljtt-p6lxo3jcx9.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json.cache
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.development.json
