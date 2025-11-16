@@ -6,14 +6,14 @@
 <PageTitle>Home</PageTitle>
 <AuthorizeView Roles="User1,User2,Admin">
     <Authorized>
-        <p>авторизован</p>
+        <p>авторизован @user.FindFirst(ClaimTypes.NameIdentifier)?.Value</p>
     </Authorized>
     <NotAuthorized>
         <p>не авторизован</p>
     </NotAuthorized>
 </AuthorizeView>
+<NavMenu></NavMenu>
 <div class="container" style="margin-buttom:10px,10px;" >
-    <NavMenu></NavMenu>
     <p></p>
     <AuthorizeView Roles="User1,User2,Admin">
      <Authorized>

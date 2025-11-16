@@ -10,9 +10,8 @@
 @* OperationsWarehouse.razor *@
 <PageTitle>OperationsWarehouse</PageTitle>
 
-
+<NavMenu></NavMenu>
 <div class="container mt-3 flex-grow-0">
-    <NavMenu></NavMenu>
     <div class="bd-example m-0 border-0">
         <div class="card p-3">
             <div class="d-flex gap-3">
@@ -416,7 +415,7 @@
         {
             TransactionDate = DateTime.Today,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = user.FindFirstValue(ClaimTypes.Role),
+            CreatedBy = user.FindFirstValue(ClaimTypes.Name),
             WarehouseId = 0,
             BlankId = 0,
             TransactionTypeId = 0,
@@ -551,7 +550,7 @@
         writeOffModel = new WriteOffModelInputModel
         {
             TransactionDate = DateTime.Today,
-            CreatedBy = user.FindFirstValue(ClaimTypes.Role)
+            CreatedBy = user.FindFirstValue(ClaimTypes.Name)
 
         };
 

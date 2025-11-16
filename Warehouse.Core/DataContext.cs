@@ -17,6 +17,9 @@ namespace Warehouse.Core
 
         public DbSet<TransactionTypeDto> TransactionType { get; set; }
 
+        public DbSet<DetailedBalanceReportDto> DetailedBalanceReport { get; set; }
+        public DbSet<MonthlyBalanceDto> MonthlyBalanceReport { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }

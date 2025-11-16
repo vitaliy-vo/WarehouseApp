@@ -22,7 +22,8 @@ namespace Warehouse.DAL
 
         public List<BlankDto> GetBlanksByIdWarehouseId(int warehouseId)
         {
-            throw new NotImplementedException();
+            var result = _dataContext.Blanks.Where(x => x.IdWarehouse == warehouseId).OrderBy(x => x.Id).ToList();
+            return result;
         }
 
         public BlankDto AddBlank(BlankDto blank)

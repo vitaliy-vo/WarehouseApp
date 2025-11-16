@@ -29,8 +29,10 @@ wwwroot\images\product\product7.jpg
 wwwroot\images\product\product8.jpg
 wwwroot\images\product\product9.jpg
 wwwroot\images\product\Новый текстовый документ.cmd
+wwwroot\reports.css
 wwwroot\styles.css
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\bootstrap\bootstrap.min.css.map
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\bootstrap\bootstrap.min.css
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\app.css
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\bootstrap\bootstrap.min.css
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\bootstrap\bootstrap.min.css.map
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\styles.css
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\wwwroot\reports.css

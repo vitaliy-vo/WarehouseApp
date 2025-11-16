@@ -119,3 +119,4 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net9.0\compressed\enho8
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net9.0\compressed\tqp3q9a5jh-xgeynlwfp5.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\bin\Debug\net9.0\BCrypt.Net-Core.dll
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net9.0\Warehouse.Web.sourcelink.json
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web\obj\Debug\net9.0\compressed\jtlw3n1dbx-qpgxa83g6l.gz

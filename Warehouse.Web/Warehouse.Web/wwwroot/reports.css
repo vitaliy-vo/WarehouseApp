@@ -1,0 +1,10 @@
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; 
+    margin-bottom: 1rem; 
+}
+
+.alert {
+    margin-top: 1rem; 
+}

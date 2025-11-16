@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 
+
 @code {
     [Inject]
     public NavigationManager navigationManager { get; set; }
@@ -18,10 +19,6 @@
             await httpContext.SignOutAsync();
 
         }
-
         httpContext.Response.Redirect("/");
     }
-
-    
-
 }

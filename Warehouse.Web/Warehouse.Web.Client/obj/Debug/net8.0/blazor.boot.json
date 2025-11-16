@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Warehouse.Web.Client",
   "resources": {
-    "hash": "sha256-1+SvBfla1pEJlS0Oxj1ozM7jm9bgufCexC48C7/k5V0=",
+    "hash": "sha256-nJrZzMDykw6AdGrh7q9M5B6x0KnbTV0rx6tHmNNU9Eg=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-D0bzod5lwwSzPR43JC8TTCcZKw+3jIHOk8CZFCRj5is="
     },
@@ -209,10 +209,10 @@
       "mscorlib.wasm": "sha256-8qWtIcy8fV43tlcx4DxsF45RlkcfK6588vVoxF7be2E=",
       "netstandard.wasm": "sha256-eOgz2RiO4YaPLOMIGgVLNrcfsQhmLQJzR0N7Pu2teXc=",
       "System.Private.CoreLib.wasm": "sha256-F8T63QCIbMPXPQPqTcuyBAw+oVvZSrWjy88j7fiJQZ4=",
-      "Warehouse.Web.Client.wasm": "sha256-hoPjWbBdp/oCB9o1QvGPTu8faJZcSYhSybK17Lqqej4="
+      "Warehouse.Web.Client.wasm": "sha256-a/AQG3x14pJGQC0e2GHs7gTETLLDe8SZMtO+f0pg34E="
     },
     "pdb": {
-      "Warehouse.Web.Client.pdb": "sha256-6dTeeez62fpOFi9eSZjubt1POxz6IgyrEy+wrv7n90o="
+      "Warehouse.Web.Client.pdb": "sha256-OyUQByriBOs1e+C45Sx83WRFUH9a5NyHREvuLQVB6t8="
     }
   },
   "cacheBootResources": true,

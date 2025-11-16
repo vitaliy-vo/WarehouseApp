@@ -4,12 +4,11 @@
 @inject BlankServise BlankServise
 @inject WarehousServise WarehousServise
 @rendermode InteractiveServer
+<link rel="stylesheet" href="reports.css" />
 
 <PageTitle>Отчет по остаткам</PageTitle>
-
+<NavMenu></NavMenu>
 <div class="container mt-3">
-    <NavMenu></NavMenu>
-
     <div class="card p-3 mb-3">
         <div class="row">
             <div class="col-md-3">
@@ -29,17 +28,24 @@
                 <AuthorizeView Roles="User1,User2">
                  <Authorized>
                 @if (selectedDate == DateTime.Now.Date)
-                {
+                 {
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button @onclick="GenerateReport" class="btn btn-primary mt-4">
                         Сформировать отчет
                     </button>
+                                <a class="btn btn-primary mt-4" href="detailed-report" role="button">
+                         Ежедневная отчётность
+                        </a>
+                 </div>
                 }
+
                 @if (isVerificationCompleted)
                 {
-                    <div class="alert alert-success">
+                            <div class="alert alert-success">
                         Сверка завершена
                     </div>
                 }
+
                 </Authorized>
                </AuthorizeView>
                 <AuthorizeView Roles="Admin">
@@ -55,7 +61,6 @@
                         }
                     </Authorized>
                 </AuthorizeView>
-                
             </div>
         </div>
     </div>

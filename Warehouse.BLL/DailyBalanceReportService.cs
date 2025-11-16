@@ -19,6 +19,7 @@ namespace Warehouse.BLL
             _warehousRepository = warehousRepository;
         }
 
+
         public async Task GenerateDailyReportAsync(DateTime date)
         {
             // Получаем все склады
@@ -126,5 +127,6 @@ namespace Warehouse.BLL
 
             await _blankRepository.SaveChangesAsync();
         }
+
     }
 }

@@ -46,5 +46,22 @@ namespace Warehouse.DAL
                 .OrderByDescending(r => r.Date)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<DailyBalanceDto>> GetByDateRangeAsync(DateTime startDate, DateTime endDate, int warehouseId, int blankId)
+        {
+            return await _dataContext.DailyBalanceReport
+                .Where(r => r.Date >= startDate && r.Date <= endDate
+                           && r.WarehouseId == warehouseId
+                           && r.BlankId == blankId)
+                .ToListAsync();
+        }
+
+        public async Task<List<DailyBalanceDto>> GetByDateRangeAsync(DateTime startDate, DateTime endDate, int warehouseId)
+        {
+            return await _dataContext.DailyBalanceReport
+                .Where(r => r.Date >= startDate && r.Date <= endDate
+                           && r.WarehouseId == warehouseId)
+                .ToListAsync();
+        }
     }
 }

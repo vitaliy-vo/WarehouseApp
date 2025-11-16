@@ -1,0 +1,207 @@
+﻿@page "/monthly-report"
+@using System.Security.Claims
+@rendermode InteractiveServer
+
+<PageTitle>Ежемесячный отчет по движению заготовок</PageTitle>
+
+<div class="container mt-3">
+    <NavMenu></NavMenu>
+
+    <div class="card p-3 mb-3">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <label class="form-label"><strong>Месяц и год:</strong></label>
+                <InputDate type="InputDateType.Month" @bind-Value="selectedMonth" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label"><strong>Склад:</strong></label>
+                <InputSelect @bind-Value="selectedWarehouseId" class="form-select">
+                    @foreach (var warehouse in warehouses)
+                    {
+                        <option value="@warehouse.Id">@warehouse.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-2 mt-4">
+                    <button @onclick="GenerateReport" class="btn btn-primary">
+                        <i class="fas fa-chart-bar"></i> Сформировать отчет
+                    </button>
+                    <button @onclick="PrintReport" class="btn btn-outline-secondary">
+                        <i class="fas fa-print"></i> Печать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center p-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+            <div class="mt-2">Формирование месячного отчета...</div>
+        </div>
+    }
+    else if (reportData != null && reportData.Any())
+    {
+        
+        <div class="table-responsive">
+            <h2 class="report-title print-only text-center">
+                <u>Инвентаризация @selectedMonth.ToString("MMMM yyyy")</u>
+            </h2>
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Заготовка</th>
+                        <th>Остаток на начало месяца</th>
+                        <th>Поступления за месяц</th>
+                        <th>Списания за месяц</th>
+                        <th>Брак за месяц</th>
+                        <th>Остаток на конец месяца</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in reportData)
+                    {
+                        <tr>
+                            <td>@item.BlankName</td>
+                            <td>@item.OpeningBalance</td>
+                            <td>@item.TotalReceipts</td>
+                            <td>@item.TotalIssues</td>
+                            <td>@item.DefectiveCount</td>
+                            <td><strong>@item.ClosingBalance</strong></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-info">
+                        <td><strong>ИТОГО:</strong></td>
+                        <td>@reportData.Sum(r => r.OpeningBalance)</td>
+                        <td>@reportData.Sum(r => r.TotalReceipts)</td>
+                        <td>@reportData.Sum(r => r.TotalIssues)</td>
+                        <td>@reportData.Sum(r => r.DefectiveCount)</td>
+                        <td><strong>@reportData.Sum(r => r.ClosingBalance)</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+    else if (reportData != null)
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Нет данных для отчета за выбранный период
+        </div>
+    }
+</div>
+
+@code {
+    private DateTime selectedMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private int selectedWarehouseId = 1;
+    private List<MonthlyReportViewModel> reportData;
+    private List<WarehouseOutPutModel> warehouses = new();
+    private ClaimsPrincipal user;
+    private bool isLoading = false;
+
+    [Inject] 
+    public IMonthlyBalanceReportService MonthlyReportService { get; set; }
+    [Inject] 
+    public WarehousServise WarehousServise { get; set; }
+    [Inject] 
+    public BlankServise BlankServise { get; set; }
+    [Inject] 
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    [Inject] 
+    public IJSRuntime JSRuntime { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+        warehouses = await GetFilteredWarehousesAsync();
+        if (warehouses.Any())
+        {
+            selectedWarehouseId = warehouses.First().Id;
+        }
+    }
+
+    private async Task GenerateReport()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            // Генерируем отчет за выбранный месяц
+            await MonthlyReportService.GenerateMonthlyReportAsync(selectedMonth);
+
+            // Получаем данные отчета
+            var report = await MonthlyReportService.GetMonthlyReportAsync(selectedMonth, selectedWarehouseId);
+            var blanks = BlankServise.GetAll().Where(w => w.IdWarehouse == selectedWarehouseId).ToList();
+
+            // Маппим в ViewModel для отображения
+            reportData = report.Select(r => new MonthlyReportViewModel
+            {
+                BlankName = blanks.FirstOrDefault(b => b.Id == r.BlankId)?.NameValue ?? "Неизвестно",
+                OpeningBalance = r.OpeningBalance,
+                TotalReceipts = r.TotalReceipts,
+                TotalIssues = r.TotalIssues,
+                DefectiveCount = r.DefectiveCount,
+                ClosingBalance = r.ClosingBalance
+            }).ToList();
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Ошибка при формировании отчета: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task PrintReport()
+    {
+        if (reportData == null || !reportData.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Сначала сформируйте отчет");
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("print");
+    }
+
+    private async Task<List<WarehouseOutPutModel>> GetFilteredWarehousesAsync()
+    {
+        var allWarehouses = WarehousServise.GetAll();
+
+        if (user.IsInRole("Admin"))
+        {
+            return allWarehouses;
+        }
+        else if (user.IsInRole("User1"))
+        {
+            return allWarehouses.Where(w => w.Id == 1).ToList();
+        }
+        else if (user.IsInRole("User2"))
+        {
+            return allWarehouses.Where(w => w.Id == 2).ToList();
+        }
+        else
+        {
+            return new List<WarehouseOutPutModel>();
+        }
+    }
+
+    public class MonthlyReportViewModel
+    {
+        public string BlankName { get; set; }
+        public int OpeningBalance { get; set; }
+        public int TotalReceipts { get; set; }
+        public int TotalIssues { get; set; }
+        public int DefectiveCount { get; set; }
+        public int ClosingBalance { get; set; }
+    }
+}

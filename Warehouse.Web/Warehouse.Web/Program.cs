@@ -1,11 +1,12 @@
-using Warehouse.Web.Components;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Warehouse.BLL;
 using Warehouse.Core;
 using Warehouse.Core.IRepositories;
 using Warehouse.DAL;
-using Warehouse.BLL;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
+using Warehouse.Web.Components;
 
 
 namespace Warehouse.Web
@@ -42,14 +43,17 @@ namespace Warehouse.Web
             builder.Services.AddScoped<IDailyBalanceReportService, DailyBalanceReportService>();
             builder.Services.AddScoped<IDailyBalanceReportRepository, DailyBalanceReportRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            
+            builder.Services.AddScoped<IMonthlyBalanceReportRepository, MonthlyBalanceReportRepository>();
+            builder.Services.AddScoped<IMonthlyBalanceReportService, MonthlyBalanceReportService>();
+
             builder.Services.AddScoped<HttpContextAccessor>();
             builder.Services.AddScoped<BlankServise>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<WarehousServise>();
             builder.Services.AddScoped<WarehouseTransactionService>();
-            builder.Services.AddScoped<DailyBalanceReportService>();
             builder.Services.AddScoped<TransactionTypeService>();
+            builder.Services.AddScoped<DetailedBalanceReportService>();
+            
 
             builder.Services.AddScoped<FileUploadService>();
 
@@ -61,10 +65,9 @@ namespace Warehouse.Web
                 options =>
                 {
                     options.Cookie.Name = "auth_token";
-                    options.LoginPath = "/login";
+                    options.LoginPath = "/login";                 
                     options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
                 });
-
             builder.Services.AddAuthorization();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddHttpContextAccessor();

@@ -1021,9 +1021,6 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compresse
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\bdpzp2py2x-tptq2av103.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b1girjvfcw-lfu7j35m59.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\rueuffoy6e-oyz0vx2fzb.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b9pn1zxajf-uqgbu3p8ws.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\tdila017tb-drxweplhcb.gz
-F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\40kfjlljtt-p6lxo3jcx9.gz
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.build.json.cache
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\staticwebassets.development.json
@@ -1034,3 +1031,6 @@ F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\refint\Warehouse.Web.Client.dll
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\Warehouse.Web.Client.pdb
 F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\ref\Warehouse.Web.Client.dll
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\b9pn1zxajf-nh7agjrjs5.gz
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\tdila017tb-7p3ak0euej.gz
+F:\C#\WarehouseApp\Warehouse.Web\Warehouse.Web.Client\obj\Debug\net8.0\compressed\40kfjlljtt-mvxkmw3axc.gz
