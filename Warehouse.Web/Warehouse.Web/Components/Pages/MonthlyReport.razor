@@ -3,11 +3,13 @@
 @rendermode InteractiveServer
 
 <PageTitle>Ежемесячный отчет по движению заготовок</PageTitle>
+<NavMenu></NavMenu>
+<div class="container mt-3 no-print">
+   
+</div>
 
 <div class="container mt-3">
-    <NavMenu></NavMenu>
-
-    <div class="card p-3 mb-3">
+    <div class="card p-3 mb-3 no-print">
         <div class="row align-items-center">
             <div class="col-md-3">
                 <label class="form-label"><strong>Месяц и год:</strong></label>
@@ -30,6 +32,9 @@
                     <button @onclick="PrintReport" class="btn btn-outline-secondary">
                         <i class="fas fa-print"></i> Печать
                     </button>
+                    <button @onclick="ToggleReportType" class="btn btn-info">
+                        <i class="fas fa-check-circle"></i> @(isVerificationReport ? "Документ" : "Сверка")
+                    </button>
                 </div>
             </div>
         </div>
@@ -37,7 +42,7 @@
 
     @if (isLoading)
     {
-        <div class="text-center p-4">
+        <div class="text-center p-4 no-print">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Загрузка...</span>
             </div>
@@ -46,73 +51,357 @@
     }
     else if (reportData != null && reportData.Any())
     {
-        
-        <div class="table-responsive">
-            <h2 class="report-title print-only text-center">
-                <u>Инвентаризация @selectedMonth.ToString("MMMM yyyy")</u>
-            </h2>
-            <table class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Заготовка</th>
-                        <th>Остаток на начало месяца</th>
-                        <th>Поступления за месяц</th>
-                        <th>Списания за месяц</th>
-                        <th>Брак за месяц</th>
-                        <th>Остаток на конец месяца</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in reportData)
-                    {
-                        <tr>
-                            <td>@item.BlankName</td>
-                            <td>@item.OpeningBalance</td>
-                            <td>@item.TotalReceipts</td>
-                            <td>@item.TotalIssues</td>
-                            <td>@item.DefectiveCount</td>
-                            <td><strong>@item.ClosingBalance</strong></td>
-                        </tr>
-                    }
-                </tbody>
-                <tfoot>
-                    <tr class="table-info">
-                        <td><strong>ИТОГО:</strong></td>
-                        <td>@reportData.Sum(r => r.OpeningBalance)</td>
-                        <td>@reportData.Sum(r => r.TotalReceipts)</td>
-                        <td>@reportData.Sum(r => r.TotalIssues)</td>
-                        <td>@reportData.Sum(r => r.DefectiveCount)</td>
-                        <td><strong>@reportData.Sum(r => r.ClosingBalance)</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
+        <div class="print-content">
+            @if (!isVerificationReport)
+            {
+                <!-- Отчет для документации -->
+                <div class="table-responsive">
+                    <h2 class="text-center mb-3">
+                        <strong>Движение заготовок за @selectedMonth.ToString("MMMM yyyy")</strong>
+                    </h2>
+                    <table class="table table-bordered print-table">
+                        <thead>
+                            <tr>
+                                <th>Заготовка</th>
+                                <th>Остаток на начало месяца</th>
+                                <th>Поступления за месяц</th>
+                                <th>Списания за месяц</th>
+                                <th>Брак за месяц</th>
+                                <th>Остаток на конец месяца</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in reportData)
+                            {
+                                <tr>
+                                    <td>@item.BlankName</td>
+                                    <td>@item.OpeningBalance</td>
+                                    <td>@item.TotalReceipts</td>
+                                    <td>@item.TotalIssues</td>
+                                    <td>@item.DefectiveCount</td>
+                                    <td>@item.ClosingBalance</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>ИТОГО:</strong></td>
+                                <td>@reportData.Sum(r => r.OpeningBalance)</td>
+                                <td>@reportData.Sum(r => r.TotalReceipts)</td>
+                                <td>@reportData.Sum(r => r.TotalIssues)</td>
+                                <td>@reportData.Sum(r => r.DefectiveCount)</td>
+                                <td>@reportData.Sum(r => r.ClosingBalance)</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            else
+            {
+
+                <!-- Вторая таблица для сверки (пустая) -->
+                <div class="table-responsive only-print" style="page-break-before: always;">
+                    <table class="table table-bordered print-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">№п.п</th>
+                                <th>Тип ценности</th>
+                                <th colspan="2" class="text-center">Количество заготовок</th>
+                                <th>Расхождения</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>Согласно Журналу учета</th>
+                                <th>Фактическое кол-во</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var (item, index) in reportData.Select((item, index) => (item, index)))
+                            {
+                                <tr>
+                                    <td>@(index + 1)</td>
+                                    <td>@item.BlankName</td>
+                                    <td>@item.ClosingBalance</td>
+                                    <td>
+                                        <span class="only-print"></span>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>ИТОГО:</strong></td>
+                                <td>@reportData.Sum(r => r.ClosingBalance)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+
+                </div>
+                <!-- Первая таблица для сверки (заполненная) -->
+                <div class="table-responsive" style="page-break-before: always;">
+                    <h2 class="text-center mb-3">
+                        <strong>Журнал инвентаризации за <DatetimeComponent DateTime=@today DateTimeFormat="dd MMMM yyyy" /></strong>
+                    </h2>
+                    <table class="table table-bordered print-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">№п.п</th>
+                                <th>Тип ценности</th>
+                                <th colspan="2" class="text-center">Количество заготовок</th>
+                                <th>Расхождения</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>Согласно Журналу учета</th>
+                                <th>Фактическое кол-во</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var (item, index) in reportData.Select((item, index) => (item, index)))
+                            {
+                                <tr>
+                                    <td>@(index + 1)</td>
+                                    <td>@item.BlankName</td>
+                                    <td>@item.ClosingBalance</td>
+                                    <td>
+                                        <input type="number"
+                                               class="form-control form-control-sm no-print"
+                                               value="@verificationData[index].ActualCount"
+                                               @oninput="@(e => HandleActualCountChange(e, index))" />
+                                        <span class="only-print">@verificationData[index].ActualCount</span>
+                                    </td>
+                                    <td>@verificationData[index].Discrepancy</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>ИТОГО:</strong></td>
+                                <td>@reportData.Sum(r => r.ClosingBalance)</td>
+                                <td>@verificationData.Sum(r => r.ActualCount)</td>
+                                <td>@verificationData.Sum(r => r.Discrepancy)</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="signatures mt-4">
+                    <div class="signature-line">
+                        <span>Ответственный работник:</span>
+                    </div>
+                    <div class="signature-line">
+                        <span>Ф.И.О.: _________________________</span>
+                        <span class="ms-3">Подпись: _________________________</span>
+                    </div>
+
+                    <div class="signature-line mt-3">
+                        <span>Контролирующий работник:</span>
+                    </div>
+                    <div class="signature-line">
+                        <span>Ф.И.О.: _________________________</span>
+                        <span class="ms-3">Подпись: _________________________</span>
+                    </div>
+                </div>
+
+              
+            }
         </div>
     }
     else if (reportData != null)
     {
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info text-center no-print">
             <i class="fas fa-info-circle"></i> Нет данных для отчета за выбранный период
         </div>
     }
 </div>
+<style>
+    /* Стили для обычного отображения */
+    .table-responsive {
+        margin-bottom: 20px;
+    }
+
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .print-table th,
+        .print-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+        }
+
+    .signatures {
+        margin-top: 40px;
+    }
+
+    .signature-line {
+        margin-bottom: 10px;
+    }
+
+    /* Элементы, которые не должны отображаться при печати */
+    .no-print {
+        display: block;
+    }
+
+    .only-print {
+        display: none;
+    }
+
+    /* Стили для печати */
+    @@media print {
+        /* Скрываем все элементы с классом no-print */
+        .no-print {
+            display: none !important;
+        }
+        /* Показываем элементы только для печати */
+        .only-print {
+            display: inline !important;
+        }
+        /* Скрываем все, кроме содержимого для печати */
+        body * {
+            visibility: hidden;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .print-content,
+        .print-content * {
+            visibility: visible;
+        }
+
+        .print-content {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            width: auto;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* Основные стили для печати */
+        body {
+            margin: 0 !important;
+            padding: 10px !important;
+            font-size: 8px;
+            line-height: 1.2;
+            -webkit-print-color-adjust: exact;
+        }
+        /* Стили таблицы для печати */
+        .print-table {
+            width: 100% !important;
+            border: 1px solid #000 !important;
+            border-collapse: collapse !important;
+            font-size: 8px !important;
+            margin-bottom: 15px !important;
+        }
+
+            .print-table th,
+            .print-table td {
+                border: 1px solid #000 !important;
+                padding: 4px !important;
+                text-align: center !important;
+            }
+
+            .print-table th {
+                font-weight: bold !important;
+                background: #f0f0f0 !important;
+            }
+
+        h2 {
+            font-size: 14px !important;
+            margin-bottom: 10px !important;
+            text-align: center !important;
+        }
+        /* Стили для подписей */
+        .signatures {
+            margin-top: 20px !important;
+            font-size: 11px !important;
+        }
+
+        .signature-line {
+            margin-bottom: 15px !important;
+        }
+        /* Убираем все ненужные элементы */
+        nav, .navbar, .card, .btn, .form-control, .form-select,
+        .form-label, .alert, .spinner-border, .container > :not(.print-content) {
+            display: none !important;
+        }
+        /* Убираем отступы у контейнера */
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* Предотвращаем разрывы страниц внутри таблицы */
+        .print-table {
+            page-break-inside: avoid;
+        }
+        /* Устанавливаем минимальную высоту для предотвращения пустых страниц */
+        .print-content {
+            min-height: 0 !important;
+            height: auto !important;
+        }
+    }
+
+    /* Дополнительные стили для предотвращения пустых страниц */
+    @@page {
+        margin: 0.5cm;
+        size: auto;
+    }
+
+    @@media print {
+        html, body {
+            height: auto !important;
+            overflow: visible !important;
+        }
+        /* Убираем все фоновые цвета которые могут создавать лишние отступы */
+        * {
+            background: transparent !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        /* Убираем все границы кроме тех что явно заданы для таблицы */
+        .print-table {
+            border: 1px solid #000 !important;
+        }
+
+            .print-table th,
+            .print-table td {
+                border: 1px solid #000 !important;
+            }
+    }
+</style>
 
 @code {
     private DateTime selectedMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private DateTime today = DateTime.Today;
     private int selectedWarehouseId = 1;
     private List<MonthlyReportViewModel> reportData;
     private List<WarehouseOutPutModel> warehouses = new();
     private ClaimsPrincipal user;
     private bool isLoading = false;
+    private bool isVerificationReport = false;
+    private List<VerificationItem> verificationData = new();
 
-    [Inject] 
+    [Inject]
     public IMonthlyBalanceReportService MonthlyReportService { get; set; }
-    [Inject] 
+    [Inject]
     public WarehousServise WarehousServise { get; set; }
-    [Inject] 
+    [Inject]
     public BlankServise BlankServise { get; set; }
-    [Inject] 
+    [Inject]
     public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-    [Inject] 
+    [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -150,6 +439,9 @@
                 DefectiveCount = r.DefectiveCount,
                 ClosingBalance = r.ClosingBalance
             }).ToList();
+
+            // Инициализируем данные для сверки
+            InitializeVerificationData();
         }
         catch (Exception ex)
         {
@@ -159,6 +451,48 @@
         {
             isLoading = false;
             StateHasChanged();
+        }
+    }
+
+    private void InitializeVerificationData()
+    {
+        verificationData = reportData.Select(r => new VerificationItem
+        {
+            BlankName = r.BlankName,
+            JournalCount = r.ClosingBalance,
+            ActualCount = r.ClosingBalance,
+            Discrepancy = 0
+        }).ToList();
+    }
+
+    private void HandleActualCountChange(ChangeEventArgs e, int index)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int value))
+        {
+            verificationData[index].ActualCount = value;
+        }
+        else
+        {
+            verificationData[index].ActualCount = 0;
+        }
+        CalculateDiscrepancy();
+    }
+
+    private void CalculateDiscrepancy()
+    {
+        foreach (var item in verificationData)
+        {
+            item.Discrepancy = item.ActualCount - item.JournalCount;
+        }
+        StateHasChanged();
+    }
+
+    private void ToggleReportType()
+    {
+        isVerificationReport = !isVerificationReport;
+        if (isVerificationReport && reportData != null)
+        {
+            InitializeVerificationData();
         }
     }
 
@@ -203,5 +537,13 @@
         public int TotalIssues { get; set; }
         public int DefectiveCount { get; set; }
         public int ClosingBalance { get; set; }
+    }
+
+    public class VerificationItem
+    {
+        public string BlankName { get; set; }
+        public int JournalCount { get; set; }
+        public int ActualCount { get; set; }
+        public int Discrepancy { get; set; }
     }
 }

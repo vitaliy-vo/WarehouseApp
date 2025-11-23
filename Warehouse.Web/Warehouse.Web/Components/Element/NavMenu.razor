@@ -1,205 +1,367 @@
-﻿<!-- NavMenu.razor -->
-<nav class="navbar">
-    <div class="nav-container">
-        <div class="nav-logo">
-            <NavLink href="/" class="logo-link">
-                <span class="logo-text">MyApp</span>
-            </NavLink>
-        </div>
-        <ul class="nav-menu @(isMenuOpen ? "active" : "")" @onclick="CloseMenuOnClick">
-           
-            <li class="nav-item">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="nav-icon">🏠</span>
-                    Home
-                </NavLink>
-            </li>
-            <AuthorizeView Roles="User1,User2,Admin">
-                <Authorized>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="operations">
-                    <span class="nav-icon">📦</span>
-                    Операции со складом
-                </NavLink>
-            </li>
-              </Authorized>
-        </AuthorizeView>
-        <AuthorizeView Roles="User1,User2,Admin">
-                <Authorized>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="reports">
-                    <span class="nav-icon">✓</span>
-                    Сверка остатков
-                </NavLink>
-            </li>
-                </Authorized>
-            </AuthorizeView>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="contact">
-                    <span class="nav-icon">📞</span>
-                    Contact
-                </NavLink>
-            </li>
-        </ul>
+﻿@rendermode InteractiveServer
 
-
-
-       
-           
-    </div>
-    <div class="nav-container">
-        <div class="nav-logo">
-            <!-- Логотип -->
-        </div>
-        <AuthorizeView Roles="User1,User2,Admin">
-            <NotAuthorized>
-        <div class="nav-right">
-            <!-- Элементы входа/выхода -->
-            <NavLink class="nav-link" href="login">
-                        <span class="nav-icon">🔑 </span>
-                Войти
-            </NavLink>
-        </div>
-        </NotAuthorized>
-                <Authorized>
-        <div class="nav-right">
-            <!-- Элементы входа/выхода -->
-                    <NavLink class="nav-link" href="logout">
-                  <span class="nav-icon">🚪</span>
-                Выйти
-            </NavLink>
-        </div>
-            </Authorized>
-        </AuthorizeView>
-        <button class="hamburger">
-            <span class="nav-icon">🚪</span>
+<div class="sidebar @(isMenuOpen ? "active" : "")">
+    <div class="sidebar-header">
+        <NavLink href="/" class="logo-link" @onclick="CloseMenu">
+            <span class="logo-text">MyApp</span>
+        </NavLink>
+        <button class="sidebar-toggle" @onclick="ToggleMenu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
         </button>
     </div>
-</nav>
+
+    <ul class="sidebar-menu">
+        <li class="menu-item">
+            <NavLink class="menu-link" href="" Match="NavLinkMatch.All">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Home</span>
+            </NavLink>
+        </li>
+
+        <AuthorizeView Roles="User1,User2,Admin">
+            <Authorized>
+                <li class="@($"menu-item dropdown {GetDropdownClass()}")">
+                    <div class="menu-link dropdown-toggle" @onclick="ToggleDropdown" style="user-select: none;">
+                        <span class="menu-icon">📦</span>
+                        <span class="menu-text">Склад</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <NavLink class="dropdown-link" href="operations" @onclick="CloseDropdown">
+                                <span class="dropdown-icon">📦</span>
+                                Операции со складом
+                            </NavLink>
+                        </li>
+                        <li class="dropdown-item">
+                            <NavLink class="dropdown-link" href="reports" @onclick="CloseDropdown">
+                                <span class="dropdown-icon">✓</span>
+                                Сверка остатков
+                            </NavLink>
+                        </li>
+                        <li class="dropdown-item">
+                            <NavLink class="dropdown-link" href="monthly-report" @onclick="CloseDropdown">
+                                <span class="dropdown-icon">🕵🏻‍♂️</span>
+                                Инвентаризация
+                            </NavLink>
+                        </li>
+                    </ul>
+                </li>
+               
+            </Authorized>
+        </AuthorizeView>
+    </ul>
+
+    <div class="sidebar-footer">
+        <AuthorizeView Roles="User1,User2,Admin">
+            <NotAuthorized>
+                <NavLink class="auth-link" href="login" @onclick="CloseMenu">
+                    <span class="auth-icon">🔑</span>
+                    <span class="auth-text">Войти</span>
+                </NavLink>
+            </NotAuthorized>
+            <Authorized>
+                <NavLink class="auth-link" href="logout" @onclick="CloseMenu">
+                    <span class="auth-icon">🚪</span>
+                    <span class="auth-text">Выйти</span>
+                </NavLink>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+</div>
 
 @code {
     private bool isMenuOpen = false;
+    private bool isDropdownOpen = false;
+    private bool isStatisticsDropdownOpen = false;
 
     private void ToggleMenu()
     {
         isMenuOpen = !isMenuOpen;
+        // При открытии меню закрываем выпадающие списки
+        if (isMenuOpen)
+        {
+            isDropdownOpen = false;
+            isStatisticsDropdownOpen = false;
+        }
+        StateHasChanged();
     }
 
-    private void CloseMenuOnClick()
+    private string GetDropdownClass()
     {
-        if (isMenuOpen)
-            isMenuOpen = false;
+        return isDropdownOpen ? "open" : string.Empty;
+    }
+
+    private void ToggleDropdown(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+    {
+        isDropdownOpen = !isDropdownOpen;
+        // Закрываем другое выпадающее меню при открытии текущего
+        if (isDropdownOpen) isStatisticsDropdownOpen = false;
+        System.Diagnostics.Debug.WriteLine($"ToggleDropdown called. isDropdownOpen = {isDropdownOpen}");
+        StateHasChanged();
+    }
+
+
+    private void CloseMenu()
+    {
+        isMenuOpen = false;
+        isDropdownOpen = false; // Обязательно закрываем выпадающие меню
+        isStatisticsDropdownOpen = false;
+        StateHasChanged();
+    }
+
+    private void CloseDropdown()
+    {
+        isDropdownOpen = false;
+        StateHasChanged();
+    }
+
+    private void CloseStatisticsDropdown()
+    {
+        isStatisticsDropdownOpen = false;
+        StateHasChanged();
     }
 }
 
+
 <style>
-    .navbar {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1rem 2rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        position: sticky;
+    /* Основные стили бокового меню */
+    .sidebar {
+        position: fixed;
         top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
         z-index: 1000;
-        border-radius: 0 0 8px 8px;
-    }
-
-    .nav-container {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        max-width: 1400px;
-        margin: 0 auto;
-        height: 70px;
-        position: relative;
-        transition: all 0.3s ease;
+        flex-direction: column;
+        overflow-y: auto;
     }
 
-    .nav-logo .logo-text {
-        color: white;
-        font-size: 2rem;
-        font-weight: 700;
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+    /* Шапка меню */
+    .sidebar-header {
+        padding: 1.5rem 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo-link {
         text-decoration: none;
+    }
+
+    .logo-text {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 700;
         transition: all 0.3s ease;
         cursor: pointer;
     }
 
-        .nav-logo .logo-text:hover {
+        .logo-text:hover {
             transform: scale(1.05);
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
-    .hamburger {
+    /* Кнопка переключения меню */
+    .sidebar-toggle {
         display: none;
         background: none;
         border: none;
         cursor: pointer;
         padding: 5px;
-        transition: all 0.3s ease;
-        position: relative;
+        flex-direction: column;
+        justify-content: space-between;
         width: 30px;
-        height: 25px;
-        z-index: 1001;
+        height: 21px;
     }
 
-        .hamburger.active .bar:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-
-        .hamburger.active .bar:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active .bar:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
-
-    .bar {
+    .hamburger-line {
         display: block;
-        width: 100%;
         height: 3px;
-        margin: 4px 0;
+        width: 100%;
         background-color: white;
-        transition: all 0.3s ease;
         border-radius: 2px;
+        transition: all 0.3s ease;
     }
 
-    .nav-menu {
-        display: flex;
+    /* Основное меню */
+    .sidebar-menu {
         list-style: none;
         margin: 0;
-        padding: 0;
-        gap: 1.5rem;
-        transition: all 0.3s ease;
+        padding: 1rem 0;
+        flex-grow: 1;
     }
 
-    .nav-item {
+    .menu-item {
         position: relative;
     }
 
-    .nav-link {
+    .menu-link {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
         color: white;
         text-decoration: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+        padding: 0.8rem 1.5rem;
         transition: all 0.3s ease;
         font-weight: 500;
     }
 
-        .nav-link:hover {
+        .menu-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+            padding-left: 1.8rem;
         }
 
-        .nav-link.active {
+        .menu-link.active {
             background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: inset 3px 0 0 rgba(255,255,255,0.8);
         }
 
-    .nav-icon {
+    .menu-icon {
         font-size: 1.2rem;
+        margin-right: 0.8rem;
+        width: 24px;
+        text-align: center;
     }
 
+    .menu-text {
+        flex-grow: 1;
+    }
+
+    /* Выпадающее меню */
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+
+    .dropdown-arrow {
+        transition: transform 0.3s ease;
+        font-size: 0.7rem;
+    }
+
+    .dropdown.open .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        display: none;
+    }
+
+    .dropdown.open .dropdown-menu,
+    .menu-item.dropdown.open .dropdown-menu {
+        display: block !important;
+    }
+
+    .dropdown-item {
+        border-left: 3px solid transparent;
+    }
+
+    .dropdown-link {
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        padding: 0.7rem 1.5rem 0.7rem 3rem;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+        .dropdown-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left-color: white;
+        }
+
+    .dropdown-icon {
+        margin-right: 0.8rem;
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Футер меню */
+    .sidebar-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .auth-link {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 0;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+        .auth-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+    .auth-icon {
+        margin-right: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    /* Адаптивность */
+    @@media (max-width: 768px) {
+        .sidebar-toggle {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 100%;
+            transform: translateX(-100%);
+        }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+                .sidebar.active::before {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0,0,0,0.5);
+                    z-index: -1;
+                }
+    }
+
+    @@media (min-width: 769px) {
+        .sidebar {
+            transform: translateX(0);
+        }
+
+        .sidebar-toggle {
+            display: none;
+        }
+    }
 </style>

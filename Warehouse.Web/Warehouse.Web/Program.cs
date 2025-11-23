@@ -97,7 +97,8 @@ namespace Warehouse.Web
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
                 .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
-
+            app.UseStatusCodePagesWithReExecute("/404");
+            app.UseAntiforgery();
             app.Run();
         }
     }
